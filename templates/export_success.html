@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comic Exported Successfully - ComicCraft</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-box {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            max-width: 580px;
+            width: 90%;
+            padding: 3.5rem 2.5rem;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .success-icon {
+            font-size: 3.8rem;
+            margin-bottom: 1.2rem;
+            display: inline-block;
+        }
+
+        .success-heading {
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: #10b981;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+
+        .success-description {
+            font-size: 1.05rem;
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 2.2rem;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-create-another {
+            background: #1d72b8;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.85rem 2.2rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+            transition: all 0.2s ease;
+        }
+
+        .btn-create-another:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45);
+        }
+
+        .btn-redownload {
+            background: #f1f5f9;
+            color: #334155;
+            text-decoration: none;
+            padding: 0.7rem 1.6rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-redownload:hover {
+            background: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+
+    <main class="success-box">
+        <h1 class="success-heading">
+            <span>✅</span> Comic Exported Successfully!
+        </h1>
+        <p class="success-description">
+            Your AI-powered comic has been successfully created! Dive back in and bring another story to life.
+        </p>
+
+        <div class="btn-group">
+            <a href="/" class="btn-create-another">
+                <span>🎨</span> Go Create Another Comic
+            </a>
+
+            {% if pdf_path %}
+            <a href="/download-pdf?file_path={{ pdf_path }}" class="btn-redownload">
+                <span>📥</span> Download PDF Again
+            </a>
+            {% endif %}
+        </div>
+    </main>
+
+</body>
+</html>

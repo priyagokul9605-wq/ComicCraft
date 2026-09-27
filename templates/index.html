@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ComicCraft - AI Comic Story Creator</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        /* Embedded styles as specified in project documentation */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: url('/static/images/bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-wrapper {
+            width: 100%;
+            max-width: 520px;
+            padding: 1.5rem;
+        }
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.25), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+            padding: 2.2rem 2.4rem;
+        }
+
+        .form-header {
+            text-align: center;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.15rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 0.4rem;
+        }
+
+        .form-control, .form-select {
+            width: 100%;
+            padding: 0.7rem 0.85rem;
+            font-size: 0.92rem;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            background-color: #ffffff;
+            color: #1e293b;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 75px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: #1d72b8;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.85rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+            transition: all 0.2s ease;
+            margin-top: 0.5rem;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45);
+            transform: translateY(-1px);
+        }
+
+        /* Loading Overlay */
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .status-msg {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .sub-msg {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <div class="form-card">
+            <h1 class="form-header">
+                <span>🖌️</span> Create Your Comic
+            </h1>
+
+            <form action="/generate" method="POST" id="comicForm">
+                <div class="form-group">
+                    <label class="form-label" for="prompt">Story Prompt:</label>
+                    <textarea class="form-control" id="prompt" name="prompt" rows="3" required placeholder="A brave fox explores an enchanted forest.">A brave fox explores an enchanted forest.</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="character_name">Main Character Name:</label>
+                    <input type="text" class="form-control" id="character_name" name="character_name" required value="Free" placeholder="e.g. Free">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="setting">Setting:</label>
+                    <select class="form-select" id="setting" name="setting" required>
+                        <option value="forest" selected>Forest</option>
+                        <option value="school">School</option>
+                        <option value="space">Space</option>
+                        <option value="city">City</option>
+                        <option value="haunted castle">Haunted Castle</option>
+                        <option value="cyberpunk metropolis">Cyberpunk Metropolis</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="tone">Story Tone:</label>
+                    <select class="form-select" id="tone" name="tone" required>
+                        <option value="dramatic" selected>Dramatic</option>
+                        <option value="funny">Funny</option>
+                        <option value="light-hearted">Light-hearted</option>
+                        <option value="poetic">Poetic</option>
+                        <option value="action-packed">Action-packed</option>
+                        <option value="mystery">Mystery</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="style">Art Style:</label>
+                    <select class="form-select" id="style" name="style" required>
+                        <option value="realistic" selected>Realistic</option>
+                        <option value="anime">Anime</option>
+                        <option value="comic book">Comic Book</option>
+                        <option value="pixel art">Pixel Art</option>
+                        <option value="watercolor">Watercolor</option>
+                        <option value="cyberpunk">Cyberpunk</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">Generate Comic</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Indicator Overlay -->
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <div class="status-msg" id="loadingStatus">Creating your comic with AI...</div>
+        <div class="sub-msg" id="loadingTip">Using Gemini Flash for layout, Gemini Pro for narration, and Stable Diffusion for panel art.</div>
+    </div>
+
+    <script>
+        const form = document.getElementById('comicForm');
+        const overlay = document.getElementById('loading-overlay');
+        const statusMsg = document.getElementById('loadingStatus');
+
+        form.addEventListener('submit', function() {
+            overlay.style.display = 'flex';
+            
+            const steps = [
+                "Generating 5-panel layout with Gemini Flash...",
+                "Writing dialogues and narration with Gemini Pro...",
+                "Illustrating comic panels with Stable Diffusion...",
+                "Compiling PDF with layout_builder and exporters...",
+                "Finalizing comic preview..."
+            ];
+            
+            let i = 0;
+            setInterval(() => {
+                if (i < steps.length) {
+                    statusMsg.innerText = steps[i];
+                    i++;
+                }
+            }, 3500);
+        });
+    </script>
+</body>
+</html>
